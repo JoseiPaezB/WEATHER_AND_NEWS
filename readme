@@ -1,0 +1,7 @@
+Ejectua estos comandos antes de iniciar el server para que tengas los node_modules y los package JSON: 
+npm init -y 
+npm i express request
+
+
+Para correr el servidor y ver la aplicacion: 
+nodemon server.js

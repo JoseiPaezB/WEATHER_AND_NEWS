@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    
+</head>
+<link rel="stylesheet" href="/styles.css">
+<body>
+    <div class="container">
+        <h2 class="main">Weather & News App</h2>
+        <input class="input" type="text" id="city" placeholder="Enter city" />
+        <button class="btn"onclick="getWeather()">Get Weather</button>
+        <div class="weather" id="weather-info"></div>
+        <div class="news" id="news-info"></div>
+    
+    </div>
+</br>
+</br>
+
+    
+
+</body>
+<script>
+    async function getWeather() {
+    const city = document.getElementById('city').value.trim();
+    const response = await fetch(`/weather?city=${city}`); 
+    const data = await response.json();
+    if (data.error) {
+                document.getElementById('weather-info').innerHTML = 'Error fetching weather data';
+            } else {
+                // Update HTML with the received data
+                document.getElementById('weather-info').innerHTML = `
+                    <h3>Weather in ${city}</h3>
+                    <p>Description: ${data.description}</p>
+                    <p>Temperature: ${data.temperature}°C</p>
+                    <p>Humidity: ${data.humidity}%</p>
+                    <p>Country: ${data.country}</p>
+                `;
+                getNewsByCountry(data.country);
+                
+            }
+}
+async function getNewsByCountry(country) {
+    const response = await fetch(`/news?country=${country}`);
+    const data = await response.json();
+    if (data.error) {
+        document.getElementById('news-info').innerHTML = 'Error fetching news data';
+    } else {
+        // Limpia el contenido anterior y añade un título para las noticias
+        document.getElementById('news-info').innerHTML = `<h3>Top News in ${country} </h3>`;
+
+        // Itera sobre los artículos en "data" y agrégalos al HTML
+        data.articles.forEach(article => {  // 'data.articles' is the correct array
+            document.getElementById('news-info').innerHTML += `
+                <p>${article.author || "Unknown"}</p>
+                <h4>${article.title || "No Title Available"}</h4>
+                <p>${article.description || "No Description Available"}</p>
+                <p><strong>Author:</strong> ${article.author || "Unknown"}</p>
+                <p><strong>Source:</strong> ${article.source || "Unknown"}</p>
+                <a href="${article.url}" target="_blank">Read more</a>
+                <br>
+                <img src="${article.image}" alt="News image" style="width:200px; height:auto;" />
+                
+                
+            `;
+        });
+    }
+}
+</script>
+</html>
